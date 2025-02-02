@@ -57,9 +57,14 @@ def get_review_list(page_id,bookId):
     }
     dict2 = {get_rich_text_from_result(x, "blockId"): x.get("id") for x in results}
     reviews = weread_api.get_review_list(bookId)
-    for i in reviews:
-        if i.get("reviewId") in dict1:
-            i["blockId"] = dict1.pop(i.get("reviewId"))
+    for review in reviews:
+        if review.get("reviewId") in dict1:
+            review["blockId"] = dict1.pop(review.get("reviewId"))
+        # remove the review from the list if it is not started with "@"
+        if review.get("content").startswith("@"):
+            reviews.remove(review)
+        else :
+            review["content"] = review.get("content").replace("@","")
     for blockId in dict1.values():
         notion_helper.delete_block(blockId)
         notion_helper.delete_block(dict2.get(blockId))
