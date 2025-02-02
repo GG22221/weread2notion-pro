@@ -59,7 +59,10 @@ def get_review_list(page_id,bookId):
     reviews = weread_api.get_review_list(bookId)
     # remove all reviews that content is not start with "@"
     reviews = [review for review in reviews if review.get("content").startswith("@")]
+
     for review in reviews:
+        # remove the first character "@"
+        review["content"] = review.get("content")[1:]
         if review.get("reviewId") in dict1:
             review["blockId"] = dict1.pop(review.get("reviewId"))
     for blockId in dict1.values():
